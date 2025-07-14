@@ -365,6 +365,9 @@ def _calculate_eff_sample_size(samples: np.ndarray) -> float:
     # Effective sample size accounting for autocorrelation
     n_eff = len(all_samples) * (1 - autocorr) / (1 + autocorr) if autocorr < 1.0 else len(all_samples)
     
+    nominal_samples = n_chains * n_iterations
+    n_eff = np.min([n_eff, nominal_samples])
+    
     return float(max(1.0, n_eff))
 
 
