@@ -57,7 +57,7 @@ from extensions.ez_diffusion import bayesian_parameter_estimation
 from core import run_jags
 
 # Run a JAGS model
-stats, chains, diagnostics, info = run_jags(
+mcmc_samples = run_jags(
     model_file    = 'model.jags',       # Path to JAGS model file
     data_file     = 'data.R',           # Path to data file
     monitorparams = ['theta', 'sigma'], # Parameters to monitor
@@ -69,26 +69,8 @@ stats, chains, diagnostics, info = run_jags(
 )
 
 # Access results
-print(f"theta estimate: {stats['theta']['mean']:.3f}")
-print(f"R-hat: {diagnostics['theta']['rhat']:.3f}")
-```
-
-### Using Extensions
-
-```python
-from extensions.ez_diffusion import bayesian_parameter_estimation
-
-# Estimate EZ-diffusion parameters
-results = bayesian_parameter_estimation(
-    rt_data=response_times,
-    accuracy_data=accuracy,
-    n_samples=5000,
-    n_chains=4
-)
-
-print(f"Boundary: {results.boundary:.3f}")
-print(f"Drift: {results.drift:.3f}")
-print(f"Non-decision time: {results.ndt:.3f}")
+results.summary()
+results.show_diagnostics()
 ```
 
 ## Package Structure
@@ -138,8 +120,8 @@ Demonstrates parameter estimation for the EZ-diffusion model.
 Main interface to run JAGS models.
 
 **Parameters:**
-- `model`: Path to JAGS model file
-- `data`: Path to data file  
+- `model_file`: Path to JAGS model file
+- `data_file`: Path to data file  
 - `monitorparams`: List of parameters to monitor
 - `nchains`: Number of chains (default: 4)
 - `nburnin`: Burn-in iterations (default: 1000)
@@ -150,33 +132,8 @@ Main interface to run JAGS models.
 - `verbosity`: Verbosity level (default: 0)
 
 **Returns:**
-- `stats`: Parameter summary statistics
-- `chains`: Raw MCMC samples
-- `diagnostics`: Convergence diagnostics
-- `info`: Additional information
+- `mcmc_samples`: An object with many custom methods
 
-### Extensions
-
-#### `bayesian_parameter_estimation(rt_data, accuracy_data, **kwargs)`
-Estimate EZ-diffusion parameters from response time and accuracy data.
-
-**Parameters:**
-- `rt_data`: List of response times
-- `accuracy_data`: List of accuracy values (0/1)
-- `n_samples`: Number of samples (default: 5000)
-- `n_chains`: Number of chains (default: 4)
-
-**Returns:**
-- `Parameters` object with boundary, drift, and ndt attributes
-
-## Development
-
-### Adding New Extensions
-
-1. Create a new module in `src/py2jags/extensions/`
-2. Implement your interface functions
-3. Add imports to `src/py2jags/extensions/__init__.py`
-4. Create a demo in `demos/`
 
 ### Running Tests
 
@@ -196,7 +153,7 @@ python ez_diffusion_demo.py
 
 ## License
 
-MIT License - see LICENSE file for details.
+See LICENSE file for details.
 
 ## Troubleshooting
 
@@ -212,14 +169,6 @@ MIT License - see LICENSE file for details.
 2. Review the API documentation above
 3. Ensure all prerequisites are installed
 4. Check JAGS installation: `jags --help`
-
-## Contributing
-
-Contributions are welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Add tests/demos for new functionality
-4. Submit a pull request
 
 ## Acknowledgments
 
