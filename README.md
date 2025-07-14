@@ -2,16 +2,16 @@
 
 **A Python interface to JAGS (Just Another Gibbs Sampler)**
 
-Py2JAGS provides a Python interface to JAGS that replicates the functionality of the Trinity MATLAB toolbox. It works by creating JAGS script files and calling JAGS via system commands, making it easy to run Bayesian analysis in Python.
+Py2JAGS provides a Python interface to JAGS. It works by creating JAGS script
+files and calling JAGS via system commands, making it easy to run Bayesian
+analysis in Python.
 
 ## Features
 
-- **Trinity-compatible API**: Familiar interface for users of the Trinity MATLAB toolbox
 - **Direct JAGS integration**: No Python wrappers needed, uses JAGS directly
 - **CODA file parsing**: Automatic parsing of JAGS output files
 - **Convergence diagnostics**: Built-in R-hat calculation and other diagnostics
 - **Parallel execution**: Support for GNU parallel when available
-- **Professional structure**: Clean, extensible codebase with proper documentation
 
 ## Installation
 
@@ -58,14 +58,14 @@ from core import run_jags
 
 # Run a JAGS model
 stats, chains, diagnostics, info = run_jags(
-    model='model.jags',           # Path to JAGS model file
-    data='data.R',                # Path to data file
-    monitorparams=['theta', 'sigma'],  # Parameters to monitor
-    nchains=4,                    # Number of chains
-    nburnin=1000,                 # Burn-in iterations
-    nsamples=5000,                # Sample iterations
-    thin=1,                       # Thinning interval
-    workingdir='./jags_output'    # Working directory
+    model_file    = 'model.jags',       # Path to JAGS model file
+    data_file     = 'data.R',           # Path to data file
+    monitorparams = ['theta', 'sigma'], # Parameters to monitor
+    nchains       =     4,              # Number of chains
+    nburnin       =  1000,              # Burn-in iterations
+    nsamples      =  5000,              # Sample iterations
+    thin          =     1,              # Thinning interval
+    workingdir    = './jags_output'     # Working directory
 )
 
 # Access results
