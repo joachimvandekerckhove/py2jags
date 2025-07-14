@@ -206,10 +206,10 @@ def write_s_data(filename: str, **data) -> None:
                     values_str = ', '.join(map(str, value))
                     f.write(f'{key} <- c({values_str})\n')
                 else:
-                    # Matrix
+                    # Matrix - flatten in column-major order for JAGS/R compatibility
                     arr = np.array(value)
                     f.write(f'{key} <- structure(\n')
-                    f.write(f'  c({", ".join(map(str, arr.flatten()))}),\n')
+                    f.write(f'  c({", ".join(map(str, arr.flatten(order="F")))}),\n')
                     f.write(f'  .Dim = c{arr.shape}\n')
                     f.write(f')\n')
 
