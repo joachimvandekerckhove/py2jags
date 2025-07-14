@@ -135,9 +135,21 @@ class JagsRunner:
                 
                 # Add initial values if provided
                 if init and len(init) > ch and init[ch]:
-                    f.write('\n# Initial values\n')
-                    for param, value in init[ch].items():
-                        f.write(f'{param} <- {value}\n')
+                    if isinstance(init[ch], dict):
+                        # Dictionary format: {param: value, ...}
+                        f.write('\n# Initial values\n')
+                        for param, value in init[ch].items():
+                            f.write(f'{param} <- {value}\n')
+                    elif isinstance(init[ch], str):
+                        # File path format: read and append the init file contents
+                        f.write('\n# Initial values from file\n')
+                        try:
+                            with open(init[ch], 'r') as init_file:
+                                f.write(init_file.read())
+                        except FileNotFoundError:
+                            raise RuntimeError(f"Initialization file not found: {init[ch]}")
+                    else:
+                        raise ValueError(f"Invalid init format for chain {ch+1}: expected dict or str, got {type(init[ch])}")
             
             # Create JAGS script
             with open(script_file, 'w') as f:
