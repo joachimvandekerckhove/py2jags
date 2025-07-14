@@ -62,6 +62,8 @@ def run_jags(**kwargs) -> MCMCSamples:
         Show JAGS warnings (default: True)
     debug : bool, optional
         Debug mode - prints working directory and skips cleanup (default: False)
+    jags_executable : str, optional
+        Name or path of JAGS executable (default: 'jags')
         
     Returns
     -------

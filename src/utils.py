@@ -65,7 +65,8 @@ def parse_options(engine: str, **kwargs) -> Dict[str, Any]:
         'showwarnings': True,
         'modules': [],
         'seed': random.randint(1, 10000),
-        'maxcores': 0  # 0 means auto-detect
+        'maxcores': 0,  # 0 means auto-detect
+        'jags_executable': 'jags'  # Name/path of JAGS executable
     }
     
     # Merge defaults

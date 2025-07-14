@@ -32,6 +32,10 @@ class JagsRunner:
         self.options = options
         self.original_dir = os.getcwd()
         
+        # Set JAGS executable path
+        self.jags_executable = options.get('jags_executable', 'jags')
+        self.jags_path = None  # Will be set in _launch_jags
+        
     def run(self) -> Dict[str, Any]:
         """
         Execute JAGS with the given options
@@ -182,9 +186,12 @@ class JagsRunner:
         maxcores = self.options['maxcores']
         
         # Find JAGS executable
-        jags_path = shutil.which('jags')
-        if not jags_path:
-            raise RuntimeError("JAGS executable not found in PATH")
+        self.jags_path = shutil.which(self.jags_executable)
+        if not self.jags_path:
+            raise RuntimeError(f"JAGS executable '{self.jags_executable}' not found in PATH")
+        
+        if verbosity >= 2:
+            print(f"Using JAGS executable: {self.jags_path}")
         
         if doparallel and nchains > 1:
             self._run_parallel(script_files, maxcores, verbosity)
@@ -206,7 +213,7 @@ class JagsRunner:
         with tempfile.NamedTemporaryFile(mode='w', suffix='.sh', delete=False) as f:
             batch_file = f.name
             for script in script_files:
-                f.write(f'jags {script}\n')
+                f.write(f'{self.jags_path} {script}\n')
         
         try:
             # Prepare parallel command
@@ -244,7 +251,7 @@ class JagsRunner:
         chain_times = []
         
         for i, script in enumerate(script_files):
-            cmd = f'jags {script}'
+            cmd = f'{self.jags_path} {script}'
             
             if verbosity > 0:
                 print(f'Running chain {i + 1} of {len(script_files)} (serial execution)')
