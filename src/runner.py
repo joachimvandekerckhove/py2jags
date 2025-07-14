@@ -124,10 +124,16 @@ class JagsRunner:
             script_files.append(script_file)
             coda_files.append(coda_file)
             
-            # Create seed file
+            # Create seed file with RNG settings and optional initial values
             with open(seed_file, 'w') as f:
                 f.write(f'.RNG.name <- "base::Mersenne-Twister"\n')
                 f.write(f'.RNG.seed <- {seed + ch + 1}\n')
+                
+                # Add initial values if provided
+                if init and len(init) > ch and init[ch]:
+                    f.write('\n# Initial values\n')
+                    for param, value in init[ch].items():
+                        f.write(f'{param} <- {value}\n')
             
             # Create JAGS script
             with open(script_file, 'w') as f:
@@ -141,9 +147,7 @@ class JagsRunner:
                 f.write(f'data in "{datafile}"\n')
                 f.write('compile, nchains(1)\n')
                 
-                # Initial values
-                if init and len(init) > ch:
-                    f.write(f'parameters in "{init[ch]}"\n')
+                # Load parameters from seed file (now includes initial values)
                 f.write(f'parameters in "{seed_file}"\n')
                 
                 f.write('initialize\n')
