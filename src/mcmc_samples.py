@@ -69,6 +69,12 @@ class MCMCSamples:
         """
         return cls(stats, chains, diagnostics, info)
     
+    def ls(self):
+        """
+        List all parameters in the MCMCSamples object
+        """
+        print(self.parameter_names)
+    
     def summary(self, 
                 parameter_regex: Optional[str] = None, 
                 summary_fcn: List[Callable] = [np.mean, np.std, np.median]) -> pd.DataFrame:
