@@ -536,7 +536,22 @@ class MCMCSamples:
         float
             R-hat statistic
         """
-        return self.diagnostics.get(parameter, {}).get('Rhat', np.nan)
+        return self.diagnostics.get(parameter, {}).get('rhat', np.nan)
+    
+    def max_rhat(self) -> float:
+        """
+        Get maximum R-hat statistic
+        """
+        rhats = (self.rhat(param) for param in self.parameter_names if param in self.diagnostics)
+        rhats = [rhat for rhat in rhats if not np.isnan(rhat)]
+        return max(rhats) if rhats else np.nan
+    
+    def converged(self) -> bool:
+        """
+        Check if all parameters have converged
+        """
+        max_rhat = self.max_rhat()
+        return not np.isnan(max_rhat) and max_rhat < 1.1
     
     def to_dataframe(self, parameters: Optional[List[str]] = None) -> pd.DataFrame:
         """
